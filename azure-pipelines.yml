@@ -4,19 +4,19 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
+- circle_ci_publish
 
 pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  imageName: '$(DOCKER_HUB_ID)/dockerapp:$(build.buildId)'
-  imageName2: '$(DOCKER_HUB_ID)/dockerapp:latest'
-
+  DOCKER_HUB_ID: 'dkijc'
+  DOCKER_HUB_PW: 'Just1ce!'
+  
 steps:
 - script: docker-compose up -d && docker-compose run dockerapp python test.py
   displayName: 'Initialize and Run Tests'
-- script: docker login -u $(DOCKER_HUB_ID) 
+- script: docker login -u $(DOCKER_HUB_ID) -p $(DOCKER_HUB_PW) 
   displayName: log in to docker hub
-- script: -p $(DOCKER_HUB_PW) && docker tag dockerapp_dockerapp $(DOCKER_HUB_ID)/dockerapp:$(build.buildId) && docker tag dockerapp_dockerapp $(DOCKER_HUB_ID)/dockerapp:latest && docker push $(DOCKER_HUB_ID)/dockerapp:$(build.buildId) && docker push $(DOCKER_HUB_ID)/dockerapp:latest
+- script: docker tag dockerapp_dockerapp $(DOCKER_HUB_ID)/dockerapp:$(build.buildId) && docker tag dockerapp_dockerapp $(DOCKER_HUB_ID)/dockerapp:latest && docker push $(DOCKER_HUB_ID)/dockerapp:$(build.buildId) && docker push $(DOCKER_HUB_ID)/dockerapp:latest
   displayName: tag and push images
