@@ -1,0 +1,20 @@
+# Docker image
+# Build a Docker image to deploy, run, or push to a container registry.
+# Add steps that use Docker Compose, tag images, push to a registry, run an image, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  imageName: '$(DOCKER_HUB_ID)/dockerapp:$(build.buildId)'
+  imageName2: '$(DOCKER_HUB_ID)/dockerapp:latest'
+
+steps:
+- script: docker-compose up -d && docker-compose run dockerapp python test.py
+  displayName: 'Initialize and Run Tests'
+- script: docker login -u $(DOCKER_HUB_ID) -p $(DOCKER_HUB_PW) && docker tag dockerapp_dockerapp $(DOCKER_HUB_ID)/dockerapp:$(build.buildId) && docker tag dockerapp_dockerapp $(DOCKER_HUB_ID)/dockerapp:latest && docker push $(DOCKER_HUB_ID)/dockerapp:$(build.buildId) && docker push $(DOCKER_HUB_ID)/dockerapp:latest
+  displayName: tagged and pushed images
