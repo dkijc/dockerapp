@@ -14,9 +14,9 @@ steps:
   displayName: 'Initialize and Run Tests'
 - script: docker login -u $(DOCKER_HUB_ID) -p $(DOCKER_HUB_PW) 
   displayName: log in to docker hub
-- script: docker tag $(agent.homeDirectory)_dockerapp $(DOCKER_HUB_ID)/dockerapp:$(Build.SourceVersion)
+- script: docker tag "$(basename $(pwd))"_dockerapp $(DOCKER_HUB_ID)/dockerapp:$(Build.SourceVersion)
   displayName: tag with commit hash
-- script: docker tag $(agent.homeDirectory)_dockerapp $(DOCKER_HUB_ID)/dockerapp 
+- script: docker tag "$(basename $(pwd))"_dockerapp $(DOCKER_HUB_ID)/dockerapp 
   displayName: tag with latest
 - script: docker push $(DOCKER_HUB_ID)/dockerapp:$(Build.SourceVersion) 
   displayName: push tagged image
